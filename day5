@@ -40,3 +40,139 @@ void displayWaitingQueue()
   }
     printf("\n");
 }
+Description of the problem in terms of os:
+
+HEADER FILES- 
+#include <stdio.h>- This is useful for getting the input from the user(Keyboard) and 
+output result text to the monitor(screen). 
+#include<stdlib.h>-This header defines several general purpose functions, including 
+dynamic memory management, random number generation, communication with the 
+environment, integer arithmetics, searching, sorting and converting. 
+#include<string.h>- It is the header file required for string functions. 
+#include<pthread.h>-We must include the pthread. h header file at the beginning of the 
+script to use all the functions of the pthreads library. 
+#include <semaphore.h>-The <semaphore.h> header shall define the sem_t type, used in 
+performing semaphore operations. The semaphore may be implemented using a file 
+descriptor, in which case applications are able to open up at least a total of 
+{OPEN_MAX} files and semaphores. 
+#include<time.h>- In C programming language time. h (used as ctime in C++) is a header 
+File defined in the C Standard Library that contains time and date function declarations to 
+provide standardized access to time/date manipulation and formatting. 
+STRUCTURE 
+1. student: student threads have own semaphore 
+2. ta: ta thread has own semaphore 
+
+FUNCTIONS 
+1. stu_programming: students is waiting in random time (they are programming in this time), and notice to ta for help. if ta is helping a student already, other students are waiting chairs in hallway, but if chairs is full, students go to their programming task back 
+2. ta_teaching: ta is sleeping until notice is arrived from at least one student. if any student wake the ta up, ta will help the student. if helping is finished and chairs are empty, then ta go to sleeping back 
+3. rand_sleep: make sleeping time (it means programming task or helping tesk) randomly. 
+
+SOLUTIONS 
+Using Pthreads, n students are created. Each student, as well as the TA, run as a separate thread. Student threads alternate between programming for a period of time and seeking help from the TA. If the TA is available, they obtain help. Otherwise, they either sit in a chair in the hallway, or if no chairs are available, resume programming and seek help at a later time. If a student arrives and notices that the TA is sleeping, the student notifies the TA using a semaphore. When the TA finishes helping a student, the TA checks to see if there are students waiting for help in the hallway. If so, the TA helps each of these students in turn. If no students are present, the TA returns to napping. 
+The TA and each student thread print their state and threadID (student number).
+2.Write the algorithm for proposed solution of the assigned problem. 
+Algorithm: 
+1. make student threads and ta thread (initialize) 
+2. each thread is running own thread function (student is programming, ta is sleeping
+3. student will wake the ta up after randomly time, then ta will help the arrived student (change student's semaphore to 1 and wait ta's semaphore). but if chairs are full, students go to their programming back and return again after randomly time 
+4. if ta's help is finished, ta check the remaining students. if there is(are) student(s) ta is keeping the current state (help continuously) and if not, ta go to sleeping back (change ta's semaphore to 1 and wait student's semaphore) 
+5. repeat 3-4 steps 
+
+3. Calculate complexity of implemented algorithm 
+Description: 
+students = (pthread_t*)malloc(sizeof(pthread_t) * student_num); O(n) 
+student_ids = (int*)malloc(sizeof(int) * student_num); O(n) 
+for(i=0; i<student_num; i++) 
+{ 
+student_ids[i] = i+1; 
+pthread_create(&students[i], NULL, stu_programming, (void*) &student_ids[i]); 
+} O(n) 
+pthread_join(ta, NULL); 
+for(i=0; i<student_num;i++) 
+{ 
+pthread_join(students[i],NULL); 
+} 
+return 0; 
+} O(n) 
+=O(n)+ O(n)+ O(n) 
+= O(n) 
+void* stu_programming(void* stu_id) 
+{ 
+int id = *(int*)stu_id; 
+printf("[stu] student %d is programming\n",id); 
+while(1) O(n) 
+{ 
+rand_sleep();
+pthread_mutex_lock(&mutex); 
+if(count < NUM_SEAT) { 
+chair[next_seat] = id; 
+count++; 
+printf(" [stu] student %d is waiting\n",id); 
+printf("waiting students : [1] %d [2] %d [3] %d\n",chair[0],chair[1],chair[2]); 
+next_seat = (next_seat+1) % NUM_SEAT; 
+pthread_mutex_unlock(&mutex); 
+sem_post(&sem_stu); 
+sem_wait(&sem_ta); 
+} 
+else 
+{ 
+thread_mutex_unlock(&mutex); 
+printf("[stu] no more chairs. student %d is programming\n",id); 
+} 
+} O(n) 
+} 
+=O(n)+O(n) 
+=O(n) 
+void* ta_teaching() 
+{ 
+while(1) 
+{ 
+sem_wait(&sem_stu); 
+pthread_mutex_lock(&mutex); 
+printf(" [ta] TA is teaching student %d\n",chair[next_teach]); 
+chair[next_teach]=0; 
+count--; 
+printf("waiting students : [1] %d [2] %d [3] %d\n",chair[0],chair[1],chair[2]); 
+next_teach = (next_teach + 1) % NUM_SEAT; 
+rand_sleep(); 
+printf(" [ta] teaching finish.\n"); 
+pthread_mutex_unlock(&mutex); 
+sem_post(&sem_ta); 
+} O(n) 
+} 
+void rand_sleep(voi 
+int time = rand() % SLEEP_MAX + 1; 
+sleep(time); 
+} O(
+=O(n)+O(1) 
+=O(n) 
+Considering the complexity of different statemnts the overall complexity tends to be approximately - 
+O(n). 
+4.Explain all the constraints given in the problem. Attach the code snippet of the implemented constraint. 
+Description: 
+The constraints in given problem is as followed: 
+• only one student can occupy seat at one time otherwise wait in waiting area 
+• If teacher is sleeping on chair student had to awoke teacher 
+• There are only 3 waiting chairs 
+• No students is left unhelped 
+• The max waiting time is 3seconds 
+
+5. Explain the boundary conditions of the implemented code. 
+Description: 
+1. A student may arrive and observe that the Ta is helping , so he goes to the waiting room. While he is on his way, the Ta finishes the work he is doing and goes to check the waiting room. Since there is no one there, he goes back to his chair and sleeps. The Ta is now waiting for a student and the student is waiting for the Ta. 
+2. Two students may arrive at the same time when there happens to be a single seat in the waiting room. They observe that ta is busyand go to the waiting room, and both attempt to occupy the single chair. 
+
+6. Explain all the test cases applied on the solution of assigned problem. 
+Description: 
+Let, test-cases be 
+No.of students =3 
+ 
+
+Again take a test case: 
+No. of students=4
+ 
+
+7. Have you made minimum 5 revisions of solution on GitHub? 
+GitHub Link: 
+Yes , I have performed minimun 5 commits in program
+
