@@ -41,3 +41,133 @@ for(int i = 0; i < 30; i++)
 printf("-"); 
 printf("\n"); 
 } 
+Description of the problem in terms of os:
+HEADER FILES- 
+#include <stdio.h>- This is useful for getting the input from the user(Keyboard) and 
+output result text to the monitor(screen). 
+#include<stdlib.h>-This header defines several general purpose functions, including 
+dynamic memory management, random number generation, communication with the 
+environment, integer arithmetics, searching, sorting and converting. 
+#include<string.h>- It is the header file required for string functions. 
+#include<time.h>- In C programming language time. h (used as ctime in C++) is a header 
+File defined in the C Standard Library that contains time and date function declarations to 
+provide standardized access to time/date manipulation and formatting. 
+HOW TO COMPLIE? 
+Compling using make file
+
+Make sure that you installed make. For building the object file of the program, use the following command 
+$make all 
+Compiling uisng Command-line Interface 
+For compiling manually using the terminal, execute the following command 
+$ gcc main.c 
+MODES- 
+Ther are two mode of execution – 
+1. USER-MODE- 
+2. RANDOM PAGE GENERATION MODE 
+
+FUNCTIONS 
+1. void showInputs()- This function asks user for inputs such no.of frames , no. of pages and display it as output . 
+
+If no user mode it will randomly generate any page sequence. 
+2. Void drawline()- This functions runs the loop for the number of pages 
+
+IMPORTANT TERMS 
+1. Page fault- A page fault occurs when a program attempts to access data or code that is in its address space, but is not currently located in the system RAM. 
+2. Page hits-If we find the required page in the Main Memory while C.P.U wants to access the page then it is a Page Hit. 
+
+SOLUTIONS 
+1. As the name suggests, this algorithm works on the principle of “First in First out“ 
+2. It replaces the oldest page that has been present in the main memory for the longest time 
+3. It is implemented by keeping track of all the pages in a queue. 
+4. With the FIFO algorithm, the OS maintains a queue to keep track of all the pages in memory, with the most recent arrival at the back (tail of the queue), and the oldest arrival in front (head of the queue).  
+When the system needs space, a page will be replaced. With FIFO, the page at the front of the queue (the oldest page) is selected for replacement. 
+
+2. Write the algorithm for proposed solution of the assigned problem. 
+Algorithm: 
+1. Start to traverse the pages. 
+2. If the memory holds fewer pages, then the capacity else goes to step 5. 
+3. Push pages in the queue one at a time until the queue reaches its maximum capacity or all page requests are fulfilled. 
+4. If the current page is present in the memory, do nothing. 
+5. Else, pop the topmost page from the queue as it was inserted first. 
+6. Replace the topmost page with the current page from the string. 
+
+Increment the page faults. 
+7. Stop 
+
+3.Calculate complexity of implemented algorithm { 
+for(int i = 0; i < no_of_frames; i++) 
+{ 
+if(frame_list[i] == target) 
+return 1; 
+} 
+return 0; 
+} O(n) 
+{ 
+// debugi(no_of_pages); 
+for (int i = 0; i < no_of_pages; i++) 
+virtual_memory_pages[i] = (rand() % 10); 
+ll last = -1; 
+for(int i = 0; i < no_of_pages; i++) 
+{ 
+if(findPageHit(frame_list, no_of_frames, virtual_memory_pages[i])) 
+count_page_hit++; 
+else 
+{ 
+frame_list[++last % no_of_frames] = virtual_memory_pages[i]; 
+count_page_fault++; 
+} 
+} O(n) 
+} 
+void showInputs(ll *virtual_memory_pages, ll no_of_pages, ll no_of_frames) 
+{ 
+for(int i = 0; i < no_of_pages; i++) 
+printf("%lld ", virtual_memory_pages[i]); 
+printf("\nNumber of frames\t\t: %lld", no_of_frames); 0(n) 
+drawLine(); 
+} 
+Considering the complexity of different statemnts the overall complexity tends to be approximately - 
+O(n)+ O(n)+O(n) 
+O(n) 
+
+4.Explain all the constraints given in the problem. Attach the code snippet of the implemented constraint. 
+Description: 
+1. If user do not gives any input thn it will itself relise the custom output 
+2. Frame number and page number must be inter 
+3. During giving input virtual pages must be separate using space 
+
+5..If you implemented any additional algothirm to support the solution , explain the need and usage of the same. 
+Description: 
+Since FIFO works on queque data structure I am going to implement queque data structure (Inseration and Deletion) as every step in fifo algothirm involves inseration and delation. 
+Algorithm for Insert Operation 
+Step 1: If REAR >= SIZE – 1 then Write “Queue is Overflow” Step 2: REAR = REAR + 1 Step 3: QUEUE [REAR] = X Step 4: If FRONT = -1 then FRONT = 0 
+Algorithm for Delete Operation 
+Step 1: If FRONT = -1 then Write “Queue is Underflow” Step 2: Return QUEUE [FRONT] Step 3: If FRONT = REAR then FRONT = 0 REAR = 0 Else FRONT = FRONT + 1 
+
+6. Explain the boundary conditions of the implemented code. 
+Description: 
+1. Frame number must ranges in between the 1 to 7 
+2. Page numbers ranges from 1to 9 
+
+7. Explain all the test cases applied on the solution of assigned problem
+Description: 
+• for test cases , in first case we will take user input 
+
+No. of frames=4 
+No. of pages=8 
+Page faults=6 
+Page hits=2 
+ 
+• In next case , computer will itself take any input 
+No. of frames=2 
+No. of pages=5 
+Page faults=4 
+Page hits=1
+8. Have you made minimum 5 revisions of solution on GitHub? 
+GitHub Link:
+ 
+
+
+
+
+ 
+
