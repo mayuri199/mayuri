@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <semaphore.h>
+#include <string.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
+typedef long long ll;
+
+#define MAX_WAITING_CHAIRS 3
+ll no_of_students_waiting = 0;
+ll next_teach_index = 0, next_seat_index = 0;
+int waiting_queue[MAX_WAITING_CHAIRS];
+sem_t student_sem, teacher_sem;
+
+void displayWaitingQueue();
+
+void *studentProcess(void *identity)
+{
+    int *identity_pointer = (int *)identity;
+    int id = *identity_pointer;
+    while (1)
+    {
+if(no_of_students_waiting < MAX_WAITING_CHAIRS)
+        {
+            sem_wait(&student_sem);
+            printf("Student %d is sitting in the waiting seat queue\n", id);
+            no_of_students_waiting++;
+            waiting_queue[next_seat_index++ % MAX_WAITING_CHAIRS] = id;
+            
+            displayWaitingQueue();
+            sleep(1);
