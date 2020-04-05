@@ -1,0 +1,50 @@
+        }
+        else{
+            printf("Student %d is doing programming at home\n", id);
+        }
+        sleep(1);
+    }
+}
+
+void teacherProcess(void null_param)
+{
+    while (1)
+    {
+        if(no_of_students_waiting > 0)
+        {
+            sem_wait(&teacher_sem);
+            sem_post(&student_sem);
+            no_of_students_waiting--;
+            printf("---------Teacher waken up by student--------\n");
+            int this_student = waiting_queue[next_teach_index %
+MAX_WAITING_CHAIRS];
+            waiting_queue[next_teach_index % MAX_WAITING_CHAIRS] = -1;
+            displayWaitingQueue();
+            next_teach_index++;
+            printf("Teacher is teaching student %d\n", this_student);
+            sleep(3);
+            printf("Teacher is leaving student %d\n", this_student);
+            sem_post(&teacher_sem);
+        }
+        else{ printf("Teacher is sleeping\n");
+        }
+        sleep(1);
+    }
+}
+int main(int argc, const char **argv)
+{
+    ll no_of_students = 5LL;             // Keeping 5 students as default
+    if (argc == 2)
+    {
+        no_of_students = atoll(argv[1]); // Taking the first argument as input
+        printf("Number of students taken from argument is %lld\n", no_of_students);
+          }
+    else if (argc == 1)
+    {
+        printf("Enter the number of students ");
+        scanf("%lld", &no_of_students);
+    }
+    else
+    {
+        printf("Passed argument doesn\'t seem to match. Taking number of student 5 as default.");
+    }
